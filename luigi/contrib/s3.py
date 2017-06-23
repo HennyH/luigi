@@ -650,7 +650,7 @@ class S3Target(FileSystemTarget):
         self.s3_options = kwargs
 
     def open(self, mode='r'):
-        if mode not in ('r', 'w', 'wb'):
+        if mode not in ('r', 'w', 'wb', 'w+b'):
             raise ValueError("Unsupported open mode '%s'" % mode)
 
         if mode == 'r':

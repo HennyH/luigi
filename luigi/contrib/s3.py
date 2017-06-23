@@ -572,9 +572,9 @@ class AtomicS3File(AtomicLocalFile):
     :param kwargs: Keyword arguments are passed to the boto function `initiate_multipart_upload`
     """
 
-    def __init__(self, path, s3_client, **kwargs):
+    def __init__(self, path, s3_client, mode='w', **kwargs):
         self.s3_client = s3_client
-        super(AtomicS3File, self).__init__(path)
+        super(AtomicS3File, self).__init__(path, mode=mode)
         self.s3_options = kwargs
 
     def move_to_final_destination(self):
@@ -663,7 +663,7 @@ class S3Target(FileSystemTarget):
 
     fs = None
 
-    def __init__(self, path, format=None, client=None, **kwargs):
+    def __init__(self, path, mode='w', format=None, client=None, **kwargs):
         super(S3Target, self).__init__(path)
         if format is None:
             format = get_default_format()
@@ -674,7 +674,7 @@ class S3Target(FileSystemTarget):
         self.s3_options = kwargs
 
     def open(self, mode='r'):
-        if mode not in ('r', 'w'):
+        if mode not in ('r', 'w', 'wb'):
             raise ValueError("Unsupported open mode '%s'" % mode)
 
         if mode == 'r':
@@ -686,7 +686,7 @@ class S3Target(FileSystemTarget):
             fileobj = ReadableS3File(s3_key)
             return self.format.pipe_reader(fileobj)
         else:
-            return self.format.pipe_writer(AtomicS3File(self.path, self.fs, **self.s3_options))
+            return self.format.pipe_writer(AtomicS3File(self.path, self.fs, mode=mode, **self.s3_options))
 
 
 class S3FlagTarget(S3Target):

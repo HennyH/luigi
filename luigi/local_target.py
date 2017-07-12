@@ -159,7 +159,7 @@ class LocalTarget(FileSystemTarget):
         rwmode = mode.replace('b', '').replace('t', '')
         if rwmode == 'w':
             self.makedirs()
-            return self.format.pipe_writer(atomic_file(self.path))
+            return self.format.pipe_writer(atomic_file(self.path, mode=mode))
 
         elif rwmode == 'r':
             fileobj = FileWrapper(io.BufferedReader(io.FileIO(self.path, mode)))

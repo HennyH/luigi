@@ -866,6 +866,8 @@ def flatten(struct):
         return flat
     if isinstance(struct, six.string_types):
         return [struct]
+    if isinstance(struct, luigi.target.Target):
+        return [struct]
 
     try:
         # if iterable

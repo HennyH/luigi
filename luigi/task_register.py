@@ -92,7 +92,17 @@ class Register(abc.ABCMeta):
         try:
             hash(k)
         except TypeError:
-            logger.debug("Not all parameter values are hashable so instance isn't coming from the cache")
+            unhashable_values = []
+            for param_value in param_values:
+                try:
+                    hash(param_value)
+                except TypeError:
+                    unhashable_values.append(param_value)
+            logger.debug(
+                "Parameter values {} are hashable so instance isn't coming from the cache".format(
+                    unhashable_values
+                )
+            )
             return instantiate()  # unhashable types in parameters
 
         if k not in h:

@@ -225,6 +225,8 @@ class Parameter(object):
         :param str x: the value to parse.
         :return: the parsed value.
         """
+        if str(x) == self.serialize(self._default):
+            return self._default
         return x  # default impl
 
     def _parse_list(self, xs):
@@ -1014,7 +1016,10 @@ class ListParameter(Parameter):
         :param str x: the value to parse.
         :return: the parsed value.
         """
-        return list(json.loads(x, object_pairs_hook=_FrozenOrderedDict))
+        obj = json.loads(x, object_pairs_hook=_FrozenOrderedDict)
+        if obj is None and self._default is None:
+            return None
+        return list(obj)
 
     def serialize(self, x):
         """
